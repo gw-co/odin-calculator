@@ -10,28 +10,31 @@
 <body>
     <h1>Calculator</h1>
     <div class="calculator-body">
-        <div class="screen"></div>
+        <div class="screen">
+            <div class="prev"></div>
+            <div class="current-value">0</div>
+        </div>
         <div class="buttons">
-            <button class="button reddish">AC</button>
-            <button class="button reddish">⌫</button>
-            <button class="button op">^</button>
-            <button class="button op">/</button>
-            <button class="button num">7</button>
-            <button class="button num">8</button>
-            <button class="button num">9</button>
-            <button class="button op">*</button>
-            <button class="button num">4</button>
-            <button class="button num">5</button>
-            <button class="button num">6</button>
-            <button class="button op">-</button>
-            <button class="button num">1</button>
-            <button class="button num">2</button>
-            <button class="button num">3</button>
-            <button class="button op">+</button>
-            <button class="button num">0</button>
-            <button class="button num">.</button>
-            <button class="button num">+/-</button>
-            <button class="button equal">=</button>
+            <button class="button reddish"  onclick="buttonfunc('A', this)">AC</button>
+            <button class="button reddish"  onclick="buttonfunc('b', this)">⌫</button>
+            <button class="button op"       onclick="buttonfunc('^', this)">^</button>
+            <button class="button op"       onclick="buttonfunc('/', this)">/</button>
+            <button class="button num"      onclick="buttonfunc('7', this)">7</button>
+            <button class="button num"      onclick="buttonfunc('8', this)">8</button>
+            <button class="button num"      onclick="buttonfunc('9', this)">9</button>
+            <button class="button op"       onclick="buttonfunc('*', this)">*</button>
+            <button class="button num"      onclick="buttonfunc('4', this)">4</button>
+            <button class="button num"      onclick="buttonfunc('5', this)">5</button>
+            <button class="button num"      onclick="buttonfunc('6', this)">6</button>
+            <button class="button op"       onclick="buttonfunc('-', this)">-</button>
+            <button class="button num"      onclick="buttonfunc('1', this)">1</button>
+            <button class="button num"      onclick="buttonfunc('2', this)">2</button>
+            <button class="button num"      onclick="buttonfunc('3', this)">3</button>
+            <button class="button op"       onclick="buttonfunc('+', this)">+</button>
+            <button class="button num"      onclick="buttonfunc('0', this)">0</button>
+            <button class="button num"      onclick="buttonfunc('.', this)">.</button>
+            <button class="button num"      onclick="buttonfunc('n', this)">+/-</button>
+            <button class="button equal"    onclick="buttonfunc('=', this)">=</button>
         </div>
     </div>
 </body>
