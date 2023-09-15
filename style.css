@@ -36,7 +36,9 @@ h1{
             /* background-color: antiquewhite; */
             height: 30px;
             font-size: 20px;
-            & *{
+            /* text-overflow: clip; */
+            white-space: nowrap;
+            & p{
                 margin: 0;
             }
         }
@@ -71,11 +73,18 @@ h1{
             /* height: 80px; */
             box-sizing: border-box;
             padding: 0;
-            border: 5px solid rgba(66, 66, 66, 0.173);
+            border: 5px solid rgba(231, 231, 231, 0.173);
             border-radius: 20px;
             flex: 1 0 auto;
             font-size: 40px;
+            outline: none;
+            transition: border-color 0.5s linear;
         }
+        .button:hover{
+            border-color: rgba(255, 255, 255, 0.512);
+            transition: border-color 0.1s linear;
+        }
+
         .reddish{
             background-color: rgb(205, 87, 87);
         }

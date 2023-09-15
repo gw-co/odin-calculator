@@ -6,6 +6,7 @@ let isdecimal = false, isnegative = false;
 
 document.onkeydown = function(e){
     let key = e.key;
+    if(key == 'Enter' || key == ' ')e.preventDefault();
     switch (key){
         case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8': case '9':
@@ -15,6 +16,7 @@ document.onkeydown = function(e){
         case '=':
             buttonfunc(key);
             break;
+        
         case 'Enter':
             buttonfunc('=');
             break;
@@ -30,24 +32,27 @@ document.onkeydown = function(e){
 }
 
 function buttonfunc(v, thisbutton){
-    // console.log(v);
-    if(operation = 'started'){
+    if(operation == 'started'){
         operation = '';
-        prev.textContent = '';
+        setprev('');
+    }
+    if(operation == 'nan'){
+        operation = '/';
+        setprev(num1 + ' ' + operation);
+        setscreenvalue(screenvalue);
     }
     switch (v){
         case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8': case '9':{
-            if(screenvalue == '')
-                screenvalue = v.toString();
+            if(screenvalue == '' || screenvalue == '0')
+                screenvalue = v;
+            else if(screenvalue == '-0')
+                screenvalue = '-' + v;
             else{
                 screenvalue += v;
-                if(screenvalue == '00')
-                    screenvalue = '0';
-                if(screenvalue == '-00')
-                    screenvalue = '-0';
             }
-            setscreenvalue(screenvalue);
+            if(screenvalue == '00') screenvalue = '0';
+            if(screenvalue == '-00') screenvalue = '-0';
             break;
         }
         case 'n':{
@@ -59,22 +64,26 @@ function buttonfunc(v, thisbutton){
                 screenvalue = screenvalue.slice(1);
                 isnegative = false;
             }
-            setscreenvalue(screenvalue);
             break;
         }
         case '.':{
             if(!isdecimal){
-                if(screenvalue == '') screenvalue = '0';
                 screenvalue += '.';
                 isdecimal = true;
             }
-            setscreenvalue(screenvalue);
+            if(screenvalue == '.') screenvalue = '0.';
+            if(screenvalue == '-.') screenvalue = '-0.';
+            break;
+        }
+        case 'b':{
+            if(screenvalue.at(-1) == '.') isdecimal = false;
+            if(screenvalue.at(-1) == '-') isnegative = false;
+            screenvalue = screenvalue.slice(0, -1);
             break;
         }
         case '+': case '-': case '*': case '/': case '^':{
-            // console.log('operating  ' + screenvalue);
-            if( operation == '' || operation == '='){ // on startup or all clear
-                if(operation == '' && screenvalue == '') return;
+            if(operation == '' && screenvalue == '') return;
+            if( operation == '' || operation == '='){
                 if(screenvalue == '')
                     num1 = ans;
                 else
@@ -85,29 +94,27 @@ function buttonfunc(v, thisbutton){
                 }
                 isdecimal = false;
                 isnegative = false;
-                operation = v;
-                screenvalue = '';
-                setscreenvalue('');
-                prev.textContent = num1 + ' ' + operation;
             }
             else{
-                if(screenvalue == ''){
-                    operation = v;
-                    prev.textContent = num1 + ' ' + operation;
-                }
-                else{
+                if(screenvalue !== ''){
                     num2 = Number(screenvalue);
                     if(isNaN(num2)) num2 = 0;
-                    process();
-
-                    setscreenvalue('');
-                    screenvalue = '';
-                    num1 = ans;
-                    
-                    operation = v;
-                    prev.textContent = num1 + ' ' + operation;
+                    if(operation == '/' && num2 == 0){
+                        setprev(num1 + ' ' + operation + ' ' + num2);
+                        setscreenvalue('not this one.');
+                        operation = 'nan';
+                        return;
+                    }
+                    else{
+                        process();
+                        num1 = ans;
+                    }
                 }
             }
+            screenvalue = '';
+            setscreenvalue('');
+            operation = v;
+            setprev(num1 + ' ' + operation);
             return;
         }
         case '=':{
@@ -115,48 +122,34 @@ function buttonfunc(v, thisbutton){
             num2 = Number(screenvalue);
             if(isNaN(num2)) num2 = 0;
             if(operation == '/' && num2 == 0){
-                isdecimal = false;
-                isnegative = false;
-                prev.textContent = num1 + ' ' + operation + ' ' + num2;
+                setprev(num1 + ' ' + operation + ' ' + num2);
                 setscreenvalue('not this one.');
-            }
-            else{
-                prev.textContent = num1 + ' ' + operation + ' ' + num2;
-                process();
-                setscreenvalue(ans.toString());
-            }
-            screenvalue = '';
-            num1 = 0;
-            num2 = 0;
-            operation = '=';
-            return;
-        }
-        case 'b':{
-            if(operation == '='){
-                buttonfunc('A');
+                operation = 'nan';
                 return;
             }
-            if(screenvalue.at(-1) == '.') isdecimal = false;
-            if(screenvalue.at(-1) == '-') isnegative = false;
-            screenvalue = screenvalue.slice(0, -1);
-            setscreenvalue(screenvalue);
-            break;
+            process();
+            setscreenvalue(ans.toString());
+            setprev(num1 + ' ' + operation + ' ' + num2);
+            screenvalue = '';
+            operation = '=';
+            return;
         }
         case 'A':{
             //reset
             setscreenvalue('');
-            prev.textContent = '';
+            setprev('');
             screenvalue = '';
+            operation = '';
             val1 = 0;
             val2 = 0;
             ans = 0;
             isdecimal = false;
             isnegative = false;
-            operation = '';
             break;
         }
     }
-    if(operation == '=') prev.textContent = '';
+    setscreenvalue(screenvalue);
+    if(operation == '=') setprev('');
 }
 
 function process(){
@@ -184,7 +177,6 @@ function process(){
             break;
         }
     }
-    // console.log(num1, num2, operation, ans);
     isdecimal = false;
     isnegative = false;
 }
@@ -193,14 +185,17 @@ function setscreenvalue(value){
     if(value.length > 20)
         currentvalue.style.fontSize = (800 / value.length).toString()+'px';
     else
-        currentvalue.style.fontSize = '40px';        
-    if(value == ''){
-        currentvalue.textContent = '0';
-    }
-    else if(value == '-'){
-        currentvalue.textContent = '-0';
-    }
-    else{
+        currentvalue.style.fontSize = '40px';
+
+    if(value == '')
+        currentvalue.textContent = '_';
+    else
         currentvalue.textContent = value;
-    }
+}
+function setprev(value){
+    if(value.length > 40)
+        prev.style.fontSize = (800 / value.length).toString()+'px';
+    else
+        prev.style.fontSize = '20px';
+    prev.textContent = value
 }
